@@ -1,6 +1,13 @@
 name: Update Homebrew Formula
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - Formula/euer.rb
+      - scripts/update_formula.py
+      - .github/workflows/update-formula.yml
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
