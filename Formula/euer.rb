@@ -3,8 +3,8 @@ class Euer < Formula
 
   desc "Lokale EÜR-Buchhaltung für Freelancer und Kleinunternehmer"
   homepage "https://github.com/curiousmarkus/euer"
-  url "https://files.pythonhosted.org/packages/e4/6b/f271bd9182b7b85c27c044b6329f8395f5abdd51760d3b3a61ab6799ca15/euer-0.10.2.tar.gz"
-  sha256 "a253132120236f2f3b274bd2e30980e0f1ccf712ca3f5fe80c8117025f705fb8"
+  url "https://files.pythonhosted.org/packages/17/43/80a2f0d2b3e547f883dbd57109acb458e901b0897c82e43d2975e89876bd/euer-0.11.1.tar.gz"
+  sha256 "7a3f36ebecf52e13cdb7500870e2abd39d1b0295ca19a2a44057b219aa4cbf8d"
   license "AGPL-3.0-or-later"
 
   depends_on "python"
@@ -32,8 +32,8 @@ class Euer < Formula
 
     database = testpath / "euer.db"
     output = testpath / "xlsx-output"
-    system bin / "euer", "--db", database, "init"
-    system bin / "euer", "--db", database, "export", "--format", "xlsx", "--output", output
+    system bin / "euer", "--db", database, "init", "--create", "--ignore-skill-version"
+    system bin / "euer", "--db", database, "export", "--format", "xlsx", "--output", output, "--ignore-skill-version"
     assert_path_exists output / "EÜR_Ausgaben.xlsx"
   end
 end
