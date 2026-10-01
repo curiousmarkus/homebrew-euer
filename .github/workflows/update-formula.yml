@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - Formula/euer.rb
+      - Formula/euer-datev.rb
       - scripts/update_formula.py
       - .github/workflows/update-formula.yml
   schedule:
@@ -17,8 +18,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  prepare:
+    name: PyPI-Versionen auflösen
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Repository auschecken
+        run: git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}.git" .
+      - name: Formulas aus PyPI aktualisieren
+        run: |
+          python3 scripts/update_formula.py Formula/euer.rb
+          python3 scripts/update_formula.py Formula/euer-datev.rb
+      - name: Geprüfte Kandidaten speichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-formulae
+          path: Formula/*.rb
+          if-no-files-found: error
+
   test:
     name: Formula prüfen (${{ matrix.os }})
+    needs: prepare
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -32,8 +53,11 @@ jobs:
       - name: Repository auschecken
         run: git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}.git" .
 
-      - name: PyPI-Daten und Ressourcen aktualisieren
-        run: python3 scripts/update_formula.py Formula/euer.rb
+      - name: Formulas des Vorbereitungsschritts übernehmen
+        uses: actions/download-artifact@v4
+        with:
+          name: updated-formulae
+          path: Formula
 
       - name: Homebrew bereitstellen (Linux)
         if: runner.os == 'Linux'
@@ -60,6 +84,7 @@ jobs:
           tap_repository="$(printf '%s' "$tap_repository_full" | sed 's/^homebrew-//')"
           tap_name="$GITHUB_REPOSITORY_OWNER/$tap_repository"
           brew style Formula/euer.rb
+          brew style Formula/euer-datev.rb
           brew audit --tap="$tap_name" --formula
 
       - name: Formula installieren und testen
@@ -68,7 +93,10 @@ jobs:
           tap_repository="$(printf '%s' "$tap_repository_full" | sed 's/^homebrew-//')"
           tap_name="$GITHUB_REPOSITORY_OWNER/$tap_repository"
           brew install --build-from-source "$tap_name/euer"
+          brew install --build-from-source "$tap_name/euer-datev"
           brew test "$tap_name/euer"
+          brew test "$tap_name/euer-datev"
+          "$(brew --prefix)/bin/euer" datev --help
 
   commit:
     name: Geprüfte Formula übernehmen
@@ -85,9 +113,11 @@ jobs:
           "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           .
 
-      - name: Formula erneut aktualisieren
-        run: |
-          python3 scripts/update_formula.py Formula/euer.rb
+      - name: Dieselben geprüften Formulas übernehmen
+        uses: actions/download-artifact@v4
+        with:
+          name: updated-formulae
+          path: Formula
 
       - name: Homebrew bereitstellen (Linux)
         run: |
@@ -113,17 +143,18 @@ jobs:
           tap_repository="$(printf '%s' "$tap_repository_full" | sed 's/^homebrew-//')"
           tap_name="$GITHUB_REPOSITORY_OWNER/$tap_repository"
           brew style Formula/euer.rb
+          brew style Formula/euer-datev.rb
           brew audit --tap="$tap_name" --formula
 
       - name: Änderung mit eigenem Repository-Token übernehmen
         run: |
           set -euo pipefail
-          if git diff --quiet -- Formula/euer.rb; then
+          if git diff --quiet -- Formula/euer.rb Formula/euer-datev.rb; then
             echo "Keine neue PyPI-Version vorhanden."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Formula/euer.rb
-          git commit -m "euer: update formula"
+          git add Formula/euer.rb Formula/euer-datev.rb
+          git commit -m "Update euer and euer-datev formulae"
           git push

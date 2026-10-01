@@ -1,27 +1,26 @@
-# Bootstrap für `curiousmarkus/homebrew-euer`
+# Homebrew-Tap für euer und euer-datev
 
-Der Tap ist absichtlich ein eigenes Repository. Diese Dateien werden einmalig dorthin
-übernommen; der laufende Update-Workflow des Taps benötigt danach keinen Token aus dem
-`euer`-Repository.
+Dieser Tap enthält die CLI `euer` und das separat installierbare DATEV-Modul.
+Nach Installation beider Formeln steht `euer datev ...` zur Verfügung, sobald
+`euer` den externen DATEV-Dispatch unterstützt.
 
-## Einmalige Einrichtung
+```bash
+brew tap curiousmarkus/euer
+brew install curiousmarkus/euer/euer curiousmarkus/euer/euer-datev
+euer datev --help
+```
 
-1. Repository `curiousmarkus/homebrew-euer` mit dem Inhalt dieses Verzeichnisses anlegen.
-2. `Formula/euer.rb.template` nach `Formula/euer.rb` kopieren.
-3. Nach dem ersten PyPI-Release den mitgelieferten Updater ausführen:
+Der Workflow prüft alle sechs Stunden PyPI auf stabile sdists, aktualisiert beide
+Formeln, testet sie auf macOS und Linux und committet exakt die getesteten Dateien.
+Für lokale Wartung:
 
-   ```bash
-   python3 scripts/update_formula.py Formula/euer.rb
-   ```
+```bash
+python3 scripts/update_formula.py Formula/euer.rb
+python3 scripts/update_formula.py Formula/euer-datev.rb
+brew style Formula/euer.rb Formula/euer-datev.rb
+brew audit --tap=curiousmarkus/euer --formula
+```
 
-   Er setzt sdist-URL und SHA256 und ergänzt `openpyxl` sowie transitive Ressourcen
-   wie `et-xmlfile` aus den PyPI-Metadaten des `xlsx`-Extras.
-4. Den Workflow unter `.github/workflows/update-formula.yml` übernehmen.
-
-Der erste Bootstrap ist ein einmaliger Maintainer-Schritt. Danach fragt der Tap alle
-sechs Stunden PyPI ab, aktualisiert URL, SHA256 und Python-Ressourcen, testet auf macOS
-und Linux und pusht nur eine erfolgreich geprüfte Formula mit seinem eigenen
-`GITHUB_TOKEN`.
-
-Die Platzhalterdatei ist kein veröffentlichungsfähiges Formula-Artefakt; vor dem ersten
-Tap-Commit muss daraus `Formula/euer.rb` mit echten PyPI-Daten erzeugt werden.
+`euer-datev` hat derzeit keine Laufzeitabhängigkeiten. Wenn ein Release neue
+Abhängigkeiten deklariert, stoppt der Updater, bis ihre Homebrew-Ressourcen
+ergänzt wurden.

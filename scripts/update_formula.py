@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aktualisiert Formula-URL, SHA256 und die XLSX-Python-Ressourcen aus PyPI."""
+"""Aktualisiert Formula-URL, SHA256 und nötige Python-Ressourcen aus PyPI."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ STABLE_VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
 REQUIREMENT_NAME_RE = re.compile(r"^([A-Za-z0-9][A-Za-z0-9_.-]*)")
 RESOURCE_START = "  # BEGIN AUTO-GENERATED PYTHON RESOURCES"
 RESOURCE_END = "  # END AUTO-GENERATED PYTHON RESOURCES"
+FORMULA_PROJECTS = {"euer.rb": "euer", "euer-datev.rb": "euer-datev"}
 
 
 def fetch_project(project: str) -> dict:
@@ -99,10 +100,13 @@ def resource_block(resources: list[tuple[str, str, str]]) -> str:
 
 
 def update_formula(formula_path: Path) -> str:
-    """Aktualisiert eine Formula und gibt die aktuelle euer-Version zurück."""
+    """Aktualisiert eine unterstützte Formula und gibt die PyPI-Version zurück."""
+    project = FORMULA_PROJECTS.get(formula_path.name)
+    if project is None:
+        raise ValueError(f"Unbekannte Formula: {formula_path.name}")
     formula = formula_path.read_text(encoding="utf-8")
-    euer_metadata = fetch_project("euer")
-    version, url, sha256 = stable_sdist("euer", euer_metadata)
+    metadata = fetch_project(project)
+    version, url, sha256 = stable_sdist(project, metadata)
     formula, url_count = re.subn(
         r'(?m)^  url "(?:__PYPI_SDIST_URL__|https://files\.pythonhosted\.org/[^"\n]+)"',
         f'  url "{url}"',
@@ -116,31 +120,34 @@ def update_formula(formula_path: Path) -> str:
         count=1,
     )
     if url_count != 1 or sha_count != 1:
-        raise ValueError("euer-URL oder euer-SHA256 in der Formula fehlt")
+        raise ValueError(f"{project}-URL oder {project}-SHA256 in der Formula fehlt")
 
-    resources = resource_block(resolve_xlsx_resources(euer_metadata))
-    formula, resource_count = re.subn(
-        rf"(?ms)^{re.escape(RESOURCE_START)}.*?^{re.escape(RESOURCE_END)}",
-        resources,
-        formula,
-        count=1,
-    )
-    if resource_count != 1:
-        raise ValueError("Automatisierter Python-Ressourcenblock fehlt")
+    if project == "euer":
+        resources = resource_block(resolve_xlsx_resources(metadata))
+        formula, resource_count = re.subn(
+            rf"(?ms)^{re.escape(RESOURCE_START)}.*?^{re.escape(RESOURCE_END)}",
+            resources,
+            formula,
+            count=1,
+        )
+        if resource_count != 1:
+            raise ValueError("Automatisierter Python-Ressourcenblock fehlt")
+    elif requirement_names(metadata):
+        raise ValueError("euer-datev hat neue Laufzeit-Abhängigkeiten: Formula-Ressourcen ergänzen")
     formula_path.write_text(formula, encoding="utf-8")
     return version
 
 
 def main() -> int:
     if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} Formula/euer.rb", file=sys.stderr)
+        print(f"Usage: {sys.argv[0]} Formula/euer.rb|Formula/euer-datev.rb", file=sys.stderr)
         return 2
     try:
         version = update_formula(Path(sys.argv[1]))
     except (OSError, ValueError, urllib.error.URLError) as exc:
         print(f"Formula-Update fehlgeschlagen: {exc}", file=sys.stderr)
         return 1
-    print(f"Formula auf euer {version} aktualisiert.")
+    print(f"Formula auf {FORMULA_PROJECTS[Path(sys.argv[1]).name]} {version} aktualisiert.")
     return 0
 
 
