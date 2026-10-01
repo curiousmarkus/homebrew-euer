@@ -3,8 +3,8 @@ class Euer < Formula
 
   desc "Lokale EÜR-Buchhaltung für Freelancer und Kleinunternehmer"
   homepage "https://github.com/curiousmarkus/euer"
-  url "https://files.pythonhosted.org/packages/fa/5f/dcbc8e3f2ce7a4b5a4c42b001a8c5b5bd1277e0b93123dbf6173777ab447/euer-0.12.3.tar.gz"
-  sha256 "c44cec9b5cb7e102600ef001922bc58288106fd82c4a8c6ab44a29a1360f5441"
+  url "https://files.pythonhosted.org/packages/63/ac/05730a301bffc8ff35b68ceb94224e8340f5a6748a43fd3124f22e762bb4/euer-0.13.0.tar.gz"
+  sha256 "3d5a1fa2bdb26c92cfac8105bba0a546ae5cc0fb9ca9b9c4bf7a77d4c8d66bba"
   license "AGPL-3.0-or-later"
 
   depends_on "python"

@@ -3,8 +3,8 @@ class EuerDatev < Formula
 
   desc "DATEV-Export für euer"
   homepage "https://euer-buchhaltung.de/datev"
-  url "https://files.pythonhosted.org/packages/dd/47/b3548d36b896e5b3f442789b2bce396a7881b18b9172e04e71f66e67faec/euer_datev-0.1.0.tar.gz"
-  sha256 "9bb7272df45cad61cc7432413f4c3509b45ac26062cece7b847e1e6133326e44"
+  url "https://files.pythonhosted.org/packages/14/6b/a49abeb00bd5796690d70af5f1f6ec8f0e6cf124bdd1abf38f9cefaefe8f/euer_datev-0.2.0.tar.gz"
+  sha256 "5f100d25f4b4e9e949602dcabdb287598ddb0d4b5acd8e3dff6d780aef95b743"
   license :cannot_represent
 
   depends_on "python"
