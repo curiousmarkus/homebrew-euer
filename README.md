@@ -45,3 +45,16 @@ danach die Formula übernehmen und auf macOS/Linux mit `brew install` und
 `brew test curiousmarkus/euer/euer-invoice` prüfen. Die Formula setzt Java und
 Toolchain über einen Wrapper und nimmt die Java-Ressource ausdrücklich von der
 Python-Abhängigkeitsinstallation aus.
+
+## Lizenz
+
+Die Homebrew-Formeln und Skripte in diesem Tap-Repository stehen unter der [BSD-2-Clause-Lizenz](LICENSE).
+
+Die durch die Formeln installierten Softwarepakete unterliegen ihren jeweiligen Lizenzen:
+- `euer`: GNU Affero General Public License v3 oder später mit Plugin-Ausnahme ([AGPL-3.0-or-later](https://github.com/curiousmarkus/euer/blob/main/LICENSE))
+- `euer-datev`: Proprietäre Softwarelizenz mit kostenfreiem Evaluierungsmodus ([LicenseRef-Proprietary](https://github.com/curiousmarkus/euer-datev/blob/main/LICENSE))
+- `euer-invoice`: Proprietäre Softwarelizenz mit monatlichem Freikontingent ([LicenseRef-Proprietary](https://github.com/curiousmarkus/euer-invoice/blob/main/LICENSE))
+
+---
+
+*Markenhinweis: DATEV ist eine eingetragene Marke der DATEV eG, Nürnberg. euer-datev und dieser Tap sind unabhängige Angebote und stehen in keiner geschäftlichen oder gesellschaftsrechtlichen Verbindung zur DATEV eG.*
