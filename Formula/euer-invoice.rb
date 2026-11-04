@@ -3,7 +3,7 @@ class EuerInvoice < Formula
   include Language::Python::Virtualenv
 
   desc "Lokale E-Rechnungs-Engine für KI-Agenten"
-  homepage "https://euer-buchhaltung.de/invoice"
+  homepage "https://euer-buchhaltung.de/e-rechnung"
   url "https://github.com/curiousmarkus/euer-invoice/releases/download/v0.3.0/euer_invoice-0.3.0.tar.gz"
   sha256 "91ff44ea92aa9c4e16eb508c1b86d8c55f713dc44d0a23bd9c9f64444bdeee28"
   license :cannot_represent
