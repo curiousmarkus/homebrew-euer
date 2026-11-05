@@ -63,7 +63,19 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           if ! command -v brew >/dev/null 2>&1; then
-            NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            installed=false
+            for attempt in 1 2 3; do
+              if NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+                installed=true
+                break
+              fi
+              echo "Homebrew-Installation fehlgeschlagen (Versuch $attempt von 3). Warte 10s vor Wiederholung..."
+              sleep 10
+            done
+            if [ "$installed" != "true" ]; then
+              echo "Fehler: Homebrew-Installation konnte nach 3 Versuchen nicht abgeschlossen werden." >&2
+              exit 1
+            fi
           fi
           echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
           echo "/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
