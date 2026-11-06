@@ -4,16 +4,16 @@ class EuerInvoice < Formula
 
   desc "Lokale E-Rechnungs-Engine für KI-Agenten"
   homepage "https://euer-buchhaltung.de/e-rechnung"
-  url "https://github.com/curiousmarkus/euer-invoice/releases/download/v0.3.0/euer_invoice-0.3.0.tar.gz"
-  sha256 "91ff44ea92aa9c4e16eb508c1b86d8c55f713dc44d0a23bd9c9f64444bdeee28"
+  url "https://github.com/curiousmarkus/euer-invoice-releases/releases/download/v0.4.1/euer_invoice-0.4.1.tar.gz"
+  sha256 "fe772c08970fe22176bcef6a257fb1933c6e10fbc2831afd91249e28ccb2895d"
   license :cannot_represent
 
   depends_on "openjdk@21"
   depends_on "python"
 
   resource "toolchain" do
-    url "https://github.com/curiousmarkus/euer-invoice/releases/download/v0.3.0/euer-invoice-toolchain-0.3.0.tar.gz"
-    sha256 "c0274113e2d7340d3393731e3b8eea7a902a1a5c3c45b2ebbe29bae60686166b"
+    url "https://github.com/curiousmarkus/euer-invoice-releases/releases/download/v0.4.1/euer-invoice-toolchain-0.4.1.tar.gz"
+    sha256 "60bddcb99766c6f72fd9ec7953628991bd692262dbdb51cda8b7630a91a3b304"
   end
 
   def install
